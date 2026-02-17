@@ -1,7 +1,15 @@
 name = "TOVSolvers"
 uuid = "74e0036c-915f-55f8-8eed-28b8c9b2a3cd"
-authors = ["Uwe Hernandez Acosta <u.hernandez@hzdr.de>"]
 version = "0.1.0"
+authors = ["Uwe Hernandez Acosta <u.hernandez@hzdr.de>"]
+
+[deps]
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+DifferentialEquations = "7.17.0"
+RecursiveArrayTools = "3.48.0"
+StaticArrays = "1.9.16"
 julia = "1.10"
