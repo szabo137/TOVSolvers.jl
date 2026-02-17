@@ -1,0 +1,7 @@
+name = "TOVSolvers"
+uuid = "74e0036c-915f-55f8-8eed-28b8c9b2a3cd"
+authors = ["Uwe Hernandez Acosta <u.hernandez@hzdr.de>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.10"
