@@ -5,6 +5,8 @@ using LaTeXStrings
 using CSV
 using Tables
 
+include("statsbox.jl")
+
 DATADIR = "BK_plots"
 PLOTDIR = "plots"
 
@@ -41,7 +43,7 @@ sol = solve(prob, config)
 @info sol
 
 @info "Plotting ... "
-fig = Figure(size = (600, 400))
+fig = Figure(size = (700, 400))
 
 ax  = Axis(
    fig[1, 1],
@@ -78,8 +80,9 @@ lines!(ax, m_neg, mp_neg,linewidth = 3, color = :red, label = "negative pressure
 
 axislegend(ax,position = :lt)
 
-filename = joinpath(PLOTDIR, "Collin_spiral_p_colored.pdf")
+statbox!(fig,sol)
 
+filename = joinpath(PLOTDIR, "Collin_spiral_p_colored.pdf")
 save(filename, fig)
 display(fig)
 
