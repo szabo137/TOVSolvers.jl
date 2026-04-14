@@ -20,6 +20,9 @@ export compute_discriminant, compute_crossing_slopes
 export classify_solution
 export is_at_horizon, compute_H, is_on_slow_manifold, get_initial_state
 
+# plotting
+export ic_label
+
 # Include source files
 include("parameters.jl")
 include("initial_conditions.jl")
@@ -29,5 +32,7 @@ include("solver.jl")
 include("admissible_crossings.jl")
 include("solution.jl")
 include("callbacks.jl")
+
+include("plotting/label_parser.jl")
 
 end # module TOVSolvers
