@@ -3,6 +3,7 @@
 *.jl.mem
 *.rej
 *.ipynb_checkpoints
+*.ipynb
 .DS_Store
 .benchmarkci
 Manifest.toml
