@@ -1,18 +1,7 @@
-"""
-    TOVParameters(omega, x)
-
-Parameters for the TOV equation with linear equation of state.
-
-# Fields
-- `omega::Float64`: Positive constant, typically in range [10^-3, 1.0]
-- `x::Float64`: Positive constant, typically 3.0
-
-# Example
-```julia
-params = TOVParameters(0.1, 3.0)
-```
-"""
-struct TOVParameters
+# TODO:
+# - implement Base.show
+# - consider Base.@kw_only
+struct TOVParameters <: AbstractTOVParameters
     omega::Float64
     x::Float64
     
@@ -25,6 +14,8 @@ end
 
 parameter_tuple(p::TOVParameters) = (p.omega, p.x)
 
+
+# TODO: is this necessary?
 # Convenient accessor functions
 Base.getproperty(p::TOVParameters, s::Symbol) = getfield(p, s)
 

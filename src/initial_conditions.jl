@@ -1,54 +1,22 @@
-"""
-Abstract type for initial conditions in the TOV equation.
-"""
-abstract type AbstractInitialCondition end
 
-"""
-    RegularOrigin(; m=0.0, m_prime=0.0)
+### Regular Origin
 
-Initial condition at the origin r=0 that ensures regularity.
-
-For regularity at r=0, at least one of the following must hold:
-- m(0) = 0 and m'(0) ≠ 0 (Case 1)
-- m'(0) = 0 and m(0) ≠ 0 (Case 2)  
-- m(0) = 0 and m'(0) = 0 (Case 3)
-
-Both m and m' being non-zero will result in a singularity.
-
-# Fields
-- `r0::Float64`: Initial radius (always 0.0 for origin)
-- `m::Float64`: Initial mass m(0)
-- `m_prime::Float64`: Initial mass derivative m'(0)
-
-# Examples
-```julia
-# Case 1: Zero mass, non-zero derivative
-ic1 = RegularOrigin(m=0.0, m_prime=1.0)
-
-# Case 2: Non-zero mass, zero derivative
-ic2 = RegularOrigin(m=0.5, m_prime=0.0)
-
-# Case 3: Both zero
-ic3 = RegularOrigin(m=0.0, m_prime=0.0)
-```
-"""
-struct RegularOrigin <: AbstractInitialCondition
-    r0::Float64
-    m::Float64
-    m_prime::Float64
+struct RegularOrigin{T<:Real,C} <: AbstractInitialCondition
+    coord_sys::C
+    arg::T
+    u1::T
+    u2::T
     
-    function RegularOrigin(; m::Real=0.0, m_prime::Real=0.0)
-        m_val = Float64(m)
-        mp_val = Float64(m_prime)
-        
-        # Check for regularity condition
-        if m_val != 0.0 && mp_val != 0.0
-            @warn "Both m and m_prime are non-zero. This will create a singularity at r=0."
-        end
-        
-        new(DEFAULT_R_ZERO, m_val, mp_val)
+    function RegularOrigin(coord_sys::C,arg::T,u1::T,u2::T; kwargs...) where {C<:AbstractTOVCoordSystem, T<:Real}
+        _assert_regular_origin(coord_sys, arg, u1, u2; kwargs...)
+        new{T,C}(coord_sys, arg, u1, u2)
     end
 end
+
+coord_system(ic::RegularOrigin) = ic.coord_sys
+initial_state(ic::RegularOrigin) = [ic.u1, ic.u2]
+initial_arg(ic::RegularOrigin) = ic.arg
+default_direction(::RegularOrigin) = :forward
 
 """
     AdmissibleCrossing(r_h; crossing=:both, params::TOVParameters)
@@ -78,6 +46,7 @@ ic_minus = AdmissibleCrossing(1.0, crossing=:minus, params=params)
 ```
 """
 struct AdmissibleCrossing <: AbstractInitialCondition
+  # TODO: refactor this!
     r_h::Float64
     m_h::Float64
     crossing::Symbol
@@ -100,19 +69,3 @@ struct AdmissibleCrossing <: AbstractInitialCondition
     end
 end
 
-"""
-    get_initial_state(ic::RegularOrigin)
-
-Get the initial state vector [m, m'] for a regular origin condition.
-"""
-function get_initial_state(ic::RegularOrigin)
-    return [ic.m, ic.m_prime]
-end
-
-"""
-    get_initial_radius(ic::AbstractInitialCondition)
-
-Get the initial radius for integration.
-"""
-get_initial_radius(ic::RegularOrigin) = ic.r0
-get_initial_radius(ic::AdmissibleCrossing) = ic.r_h

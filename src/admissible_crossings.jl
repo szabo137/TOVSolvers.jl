@@ -1,3 +1,5 @@
+# TODO: 
+# - update this using Coordinate systems
 """
     compute_discriminant(r_h, m_h, params::TOVParameters)
 
