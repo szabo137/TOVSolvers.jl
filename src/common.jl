@@ -1,147 +1,204 @@
-### Coordinate Systems
+"""
+    AbstractTOVCoordSystem
 
+Supertype for coordinate-system representations of a TOV solution. Implement
+`coordinate_names`, `reached_horizon`, and `reached_origin` for each subtype.
+"""
 abstract type AbstractTOVCoordSystem end
 
-
 """
-    coordinate_names(::AbstractTOVCoordSystems)::NTuple{N,Symbol}
+    coordinate_names(coord_sys)::Tuple{Vararg{Symbol}}
 
-Interface function: return tuple of symbols denoting the names of the coordinates for the given coordinate system. 
+Return coordinate names in the same order used by every state in `coord_sys`.
+Implement this for each coordinate-system subtype.
 """
 function coordinate_names end
 
 """
-    reached_horizon(::AbstractTOVCoordSystem, arg_final, u1_final, u2_final; tol = 1e-10)
-    reached_horizon(::AbstractTOVSolution)
+    reached_horizon(coord_sys, arg, state; atol, rtol)::Bool
 
-Interface function: return true if solution reached the horizon in a given coordinate system, or TOV solution.
+Return whether `state` at independent argument `arg` is at the horizon in
+`coord_sys`. Implement this geometric test for each coordinate-system subtype.
 """
 function reached_horizon end
 
 """
-    reached_origin(::AbstractTOVCoordSystem, arg_final, u1_final, u2_final; tol = 1e-10)
-    reached_horizon(::AbstractTOVSolution)
+    reached_origin(coord_sys, arg, state; atol, rtol)::Bool
 
-Interface function: return true if solution reached the origin in a given coordinate system, or TOV solution.
+Return whether `state` at independent argument `arg` is at the origin in
+`coord_sys`. Implement this geometric test for each coordinate-system subtype.
 """
 function reached_origin end
 
-### Callbacks
-
 """
-    create_horizon_callback(coord_sys::AbstractTOVCoordSystem, params::TOVParameters, tol::Float64)
+    create_horizon_callback(coord_sys, params; kwargs...)
 
-Interface function: return ContinousCallback if solution in the given coordinate system reaches the horizon. 
+Create the solver callback for a horizon crossing. Implement it for every
+coordinate system that can be integrated by the package.
 """
 function create_horizon_callback end
 
 """
-    create_origin_callback(coord_sys::AbstractTOVCoordSystem, params::TOVParameters, tol::Float64)
+    create_origin_callback(coord_sys, params; kwargs...)
 
-Interface function: return ContinousCallback if solution in given coordinate system reaches origin
+Create the solver callback for an origin crossing. Implement it for every
+coordinate system that can be integrated by the package.
 """
 function create_origin_callback end
 
-### TOV equation
+"""
+    AbstractTOVEquation
 
+Supertype for a TOV equation formulation. Implement `coord_system` for each
+subtype.
+"""
 abstract type AbstractTOVEquation end
 
 """
-    coord_system(::AbstractTOVEquation)::AbstractTOVCoordSystem
-    coord_system(::AbstractInitialCondition)::AbstractTOVCoordSystem
-    coord_system(::AbstractTOVProblem)::AbstractTOVCoordSystem
-    coord_system(::AbstractTOVSolution)::AbstractTOVCoordSystem
+    coord_system(x)::AbstractTOVCoordSystem
 
-Interface function: return coordinate system associated with the given TOV equation, problem, solution, or initial condition. 
+Return the coordinate system associated with an equation, initial condition,
+problem, or solution. Implement it for each concrete subtype.
 """
 function coord_system end
 
-### Initial Conditions
+"""
+    AbstractInitialCondition
 
+Supertype for TOV initial conditions. Implement `initial_state`,
+`initial_argument`, and `default_direction` for each subtype.
+"""
 abstract type AbstractInitialCondition end
 
 """
-    initial_state(::AbstractInitialCondition)::NTuple{N,T}
+    initial_state(initial_condition)
 
-Interface function: return the intitial state for a given kind of initial conditions. 
+Return the initial dependent-variable state, ordered as required by its
+coordinate system. Implement it for each initial-condition subtype.
 """
 function initial_state end
 
 """
-    initial_arg(::AbstractInitialCondition)::NTuple{N,T}
+    initial_argument(initial_condition)
 
-Interface function: return the intitial argument for a given kind of initial conditions. 
+Return the initial value of the independent integration argument. Implement it
+for each initial-condition subtype.
 """
-function initial_arg end
+function initial_argument end
 
 """
-  default_direction(::AbstractInitialCondition)
+    default_direction(initial_condition)
 
-Interface function: return default integration direction.
+Return the default integration direction, conventionally `:forward` or `:backward`.
+Implement it for each initial-condition subtype.
 """
 function default_direction end
 
-### TOV parameters
+"""
+    AbstractTOVParameters
 
+Supertype for the physical and equation-of-state parameters of a TOV system.
+Implement `parameter_tuple` for each subtype.
+"""
 abstract type AbstractTOVParameters end
 
 """
-  paramter_tuple(::AbstractTOVParameters)
+    parameter_tuple(params)::Tuple
 
-Interface function: return parameters of a TOV system as a tuple.
+Return the parameters in the canonical order used by the equation. Implement
+it for each parameter subtype.
 """
-function paramter_tuple end
+function parameter_tuple end
 
-### TOV Problem
+"""
+    AbstractTOVProblem
 
+Supertype for a fully specified TOV integration problem. Implement the problem
+accessors below for each subtype.
+"""
 abstract type AbstractTOVProblem end
 
 """
-  parameters(::AbstractTOVProblem)
-  parameters(::AbstractTOVSolution)
+    parameters(x)::AbstractTOVParameters
 
-Interface function: return TOV parameters for a given TOV problem or solution.
+Return the TOV parameters stored by a problem or solution. Implement it for
+each concrete problem and solution subtype.
 """
 function parameters end
 
 """
-  initial_conditions(::AbstractTOVProblem)
-  initial_conditions(::AbstractTOVSolution)
+    initial_condition(x)::AbstractInitialCondition
 
-Interface function: return initial_conditions for a given TOV problem or solution.
+Return the initial condition stored by a problem or solution. Implement it for
+each concrete problem and solution subtype.
 """
-function initial_conditions end
-
-"""
-  arg_span(::AbstractTOVProblem)
-
-Interface function: return argument span for a given TOV problem.
-"""
-function arg_span end
+function initial_condition end
 
 """
-  integ_direction(::AbstractTOVProblem)
+    argument_span(problem)::Tuple
 
-Interface function: return integration direction for a given TOV problem.
+Return the integration interval as `(arg_start, arg_stop)`. Implement it for
+each problem subtype.
 """
-function integ_direction end
-
-### TOV solution
+function argument_span end
 
 """
-  AbstractTOVSolution
+    integration_direction(problem)
 
-Interface functions (among others): 
-- `Base.length(::AbstractTOVSolution)`
-- `Base.getindex(::AbstractTOVSolution, i::Int)`
-- `Base.iterate(::AbstractTOVSolution, state=1)`
+Return the requested integration direction, conventionally `:forward` or `:backward`.
+Implement it for each problem subtype.
+"""
+function integration_direction end
+
+"""
+    AbstractTOVSolution
+
+Supertype for TOV integration results. Concrete subtypes must also implement
+`Base.length`, `Base.getindex`, and `Base.iterate` using one consistent sample
+representation.
 """
 abstract type AbstractTOVSolution end
 
 """
-  hit_horizon(::AbstractTOVSolution)
+    final_argument(solution)
 
-Interface function: return wether the solution reached the horizon.
+Return the independent argument at the final saved solution state. Implement
+it for each solution subtype.
 """
-function hit_horizon end
+function final_argument end
 
+"""
+    final_state(solution)
+
+Return the final dependent-variable state in coordinate-system order. Implement
+it for each solution subtype.
+"""
+function final_state end
+
+"""
+    termination_reason(solution)::Symbol
+
+Return the reason integration stopped, such as `:horizon`, `:origin`,
+`:completed`, or `:failure`. Implement it for each solution subtype.
+"""
+function termination_reason end
+
+"""
+    reached_horizon(solution; kwargs...)::Bool
+
+Return whether the final solution state is at the horizon. This convenience
+method requires `coord_system`, `final_argument`, and `final_state`.
+"""
+function reached_horizon(solution::AbstractTOVSolution; kwargs...)
+    reached_horizon(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
+end
+
+"""
+    reached_origin(solution; kwargs...)::Bool
+
+Return whether the final solution state is at the origin. This convenience
+method requires `coord_system`, `final_argument`, and `final_state`.
+"""
+function reached_origin(solution::AbstractTOVSolution; kwargs...)
+    reached_origin(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
+end

@@ -7,15 +7,28 @@ const DEFAULT_ORIGIN_TOLERANCE = 1e-10
 using DifferentialEquations
 using StaticArrays
 
-# Coordinate Systems
+# Interface types
 export AbstractTOVCoordSystem
+export AbstractTOVEquation
+export AbstractInitialCondition
+export AbstractTOVParameters
+export AbstractTOVProblem
+export AbstractTOVSolution
+
+# Coordinate-system interface
 export coordinate_names, reached_horizon, reached_origin
 export create_horizon_callback, create_origin_callback
 
-export AbstractInitialCondition
-export initial_state, initial_arg
+# Equation and initial-condition interface
+export coord_system
+export initial_state, initial_argument, default_direction
 
-# Core types
+# Parameter, problem, and solution interface
+export parameter_tuple
+export parameters, initial_condition, argument_span, integration_direction
+export final_argument, final_state, termination_reason
+
+# Core concrete types
 export TOVParameters, TOVProblem, TOVSolution
 export RegularOrigin, AdmissibleCrossing
 export TOVSolverConfig
@@ -27,18 +40,11 @@ export solve, find_admissible_crossings, slow_manifold
 export compute_discriminant, compute_crossing_slopes
 export classify_solution
 
-# Supported Coordinate Systems
+# Supported coordinate systems
 export MMprimeSystem
 
-"""
-    hi = hello_world()
-A simple function to return "Hello, World!"
-"""
-function hello_world()
-    return "Hello, World!"
-end
-
-# Include source files
+# Include source files. `common.jl` defines the shared abstract types and
+# interface-function declarations.
 include("common.jl")
 include("parameters.jl")
 include("coordinate_system.jl")
