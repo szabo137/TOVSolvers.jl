@@ -1,5 +1,4 @@
 name: Reusable test
-
 on:
   workflow_call:
     inputs:
@@ -26,13 +25,11 @@ on:
     secrets:
       codecov_token:
         required: true
-
 jobs:
   test:
     name: Julia ${{ inputs.version }} - ${{ inputs.os }} - ${{ inputs.arch }} - ${{ github.event_name }}
     runs-on: ${{ inputs.os }}
     continue-on-error: ${{ inputs.allow_failure }}
-
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
