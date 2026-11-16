@@ -1,3 +1,9 @@
+# TODO: 
+# - consider using type parameters instead of Float64
+# - consider adding input validation, e.g.
+#   - non-negative abstol and reltol
+#   - forbidden numbers like NaN, Inf for tolerances
+#   - non-zero maxiters
 """
     TOVSolverConfig
 

@@ -7,6 +7,9 @@ const DEFAULT_ORIGIN_TOLERANCE = 1e-10
 using DifferentialEquations
 using StaticArrays
 
+# constants
+export DEFAULT_ORIGIN_TOLERANCE, DEFAULT_HORIZON_TOLERANCE, DEFAULT_R_ZERO
+
 # Interface types
 export AbstractTOVCoordSystem
 export AbstractTOVEquation
