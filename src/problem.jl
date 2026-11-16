@@ -43,10 +43,10 @@ struct TOVProblem{C<:AbstractTOVCoordSystem,IC <: AbstractInitialCondition} <: A
 end
 
 parameters(prob::TOVProblem) = prob.params
-initial_conditions(prob::TOVProblem) = prob.ic
+initial_condition(prob::TOVProblem) = prob.ic
 coord_system(prob::TOVProblem) = prob.coord_sys
-arg_span(prob::TOVProblem) = prob.arg_span
-integ_direction(prob::TOVProblem) = prob.direction
+argument_span(prob::TOVProblem) = prob.arg_span
+integration_direction(prob::TOVProblem) = prob.direction
 
 function TOVProblem(
     params::TOVParameters,
@@ -55,7 +55,7 @@ function TOVProblem(
     arg_limit::Real; # could be r_end, or r0, depending on the ic
     direction::Symbol=:auto
 )
-    arg_init = initial_arg(ic)
+    arg_init = initial_argument(ic)
 
     arg_init != arg_limit || throw(
         ArgumentError(
@@ -63,8 +63,9 @@ function TOVProblem(
             )
     )
 
-    arg_span = arg_limit < arg_init ? (arg_limit,arg_init) : (arg_init, arg_limit)
-    
+    #arg_span = arg_limit < arg_init ? (arg_limit,arg_init) : (arg_init, arg_limit)
+    arg_span = (initial_argument(ic), arg_limit)
+
     if direction == :auto
         direction = default_direction(ic)
     end
