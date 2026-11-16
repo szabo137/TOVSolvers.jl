@@ -34,7 +34,7 @@ function _get_tov_equation(::MMprimeSystem)
     return _eq
 end
 
-function _assert_regular_origin(::MMprimeSystem, r, m, mp; tol = 1e-10)
+function assert_regular_origin(::MMprimeSystem, r, m, mp; tol = 1e-10)
 
     if m >=tol && mp >=tol
         @warn "Both m and m_prime are non-zero. This will create a singularity at r=0."

@@ -31,6 +31,14 @@ Return whether `state` at independent argument `arg` is at the origin in
 function reached_origin end
 
 """
+    assert_regular_origin(coord_sys, arg, state; kwargs...)
+
+Throw `ArgumentError` unless `(arg, state)` is a valid regular-origin initial
+condition for `coord_sys`. Implement for each coordinate system.
+"""
+function assert_regular_origin end
+
+"""
     create_horizon_callback(coord_sys, params; kwargs...)
 
 Create the solver callback for a horizon crossing. Implement it for every
