@@ -33,16 +33,14 @@ export final_argument, final_state, termination_reason
 
 # Core concrete types
 export TOVParameters, TOVProblem, TOVSolution
-export RegularOrigin, AdmissibleCrossing
+export RegularOrigin
 export TOVSolverConfig
 export TOVEquation
 
 # Solving interface
-export create_callbacks, solve, find_admissible_crossings, slow_manifold
-
+export create_callbacks, solve, slow_manifold
 
 # Utilities
-export compute_discriminant, compute_crossing_slopes
 export classify_solution
 
 # Supported coordinate systems
@@ -57,7 +55,6 @@ include("initial_conditions.jl")
 include("equations.jl")
 include("problem.jl")
 include("solver.jl")
-include("admissible_crossings.jl")
 include("solution.jl")
 
 include("coordinate_systems/rmmp.jl")
