@@ -1,94 +1,83 @@
-"""
-    TOVProblem(params, initial_condition, r_span; direction=:forward)
-
-Defines a TOV problem to be solved.
-
-# Fields
-- `params::TOVParameters`: Physical parameters (omega, x)
-- `initial_condition::AbstractInitialCondition`: Initial conditions
-- `r_span::Tuple{Float64,Float64}`: Integration interval (r_start, r_end)
-- `direction::Symbol`: Integration direction (:forward or :backward)
-
-# Examples
-```julia
-# Problem starting from origin, integrating forward
-params = TOVParameters(0.1, 3.0)
-ic = RegularOrigin(m=0.0, m_prime=1.0)
-prob = TOVProblem(params, ic, (0.0, 5.0))
-
-# Problem starting from horizon, shooting backward
-ic_horizon = AdmissibleCrossing(2.0, crossing=:plus, params=params)
-prob_backward = TOVProblem(params, ic_horizon, (2.0, 0.0), direction=:backward)
-```
-"""
-struct TOVProblem
+struct TOVProblem{C <: AbstractTOVCoordSystem, IC <: AbstractInitialCondition} <: AbstractTOVProblem
     params::TOVParameters
-    initial_condition::AbstractInitialCondition
-    r_span::Tuple{Float64, Float64}
+    coord_sys::C
+    ic::IC
+    arg_span::Tuple{Float64, Float64}
     direction::Symbol
-    
+
     function TOVProblem(
-        params::TOVParameters,
-        initial_condition::AbstractInitialCondition,
-        r_span::Tuple{Real, Real};
-        direction::Symbol=:forward
-    )
-        direction in [:forward, :backward] || throw(ArgumentError("direction must be :forward or :backward"))
-        
-        r_start, r_end = Float64.(r_span)
-        
+            params::TOVParameters,
+            coord_sys::C,
+            ic::IC,
+            arg_span::Tuple{Real, Real};
+            direction::Symbol = :auto
+        ) where {C <: AbstractTOVCoordSystem, IC <: AbstractInitialCondition}
+
+        coord_system(ic) == coord_sys || throw(
+            ArgumentError(
+                "coordinate system must match with the one from initial conditions"
+            )
+        )
+
+        direction in [:forward, :backward, :auto] || throw(ArgumentError("direction must be :forward, :backward, or :auto"))
+
+        if direction == :auto
+            direction = default_direction(ic)
+        end
+
+        # TODO: avoid type casting
+        arg_start, arg_end = arg_span
+
         # Validate direction matches span
-        if direction == :forward && r_end < r_start
-            @warn "Forward integration requested but r_end < r_start. Setting direction to :backward"
+        if direction == :forward && arg_end < arg_start
+            @warn "Forward integration requested but arg_end < arg_start. Setting direction to :backward"
             direction = :backward
-        elseif direction == :backward && r_end > r_start
-            @warn "Backward integration requested but r_end > r_start. Setting direction to :forward"
+        elseif direction == :backward && arg_end > arg_start
+            @warn "Backward integration requested but arg_end > arg_start. Setting direction to :forward"
             direction = :forward
         end
-        
-        new(params, initial_condition, (r_start, r_end), direction)
+
+
+        return new{C, IC}(params, coord_sys, ic, arg_span, direction)
     end
 end
 
-"""
-    TOVProblem(params, initial_condition, r_end; direction=:auto)
+parameters(prob::TOVProblem) = prob.params
+initial_condition(prob::TOVProblem) = prob.ic
+coord_system(prob::TOVProblem) = prob.coord_sys
+argument_span(prob::TOVProblem) = prob.arg_span
+integration_direction(prob::TOVProblem) = prob.direction
 
-Convenience constructor that automatically determines r_start from initial condition.
-
-# Arguments
-- `params`: TOV parameters
-- `initial_condition`: Initial conditions
-- `r_end`: Final radius for integration
-- `direction`: :auto (default), :forward, or :backward
-
-If direction is :auto, it is determined based on the initial condition type:
-- RegularOrigin: integrates forward from 0 to r_end
-- AdmissibleCrossing: integrates backward from r_h to r_end
-"""
 function TOVProblem(
-    params::TOVParameters,
-    initial_condition::AbstractInitialCondition,
-    r_end::Real;
-    direction::Symbol=:auto
-)
-    r_start = get_initial_radius(initial_condition)
-    
+        params::TOVParameters,
+        coord_sys::AbstractTOVCoordSystem,
+        ic::AbstractInitialCondition,
+        arg_limit::Real; # could be r_end, or r0, depending on the ic
+        direction::Symbol = :auto
+    )
+    arg_init = initial_argument(ic)
+
+    arg_init != arg_limit || throw(
+        ArgumentError(
+            "given argument limit must not match initial argument given by the initial conditions"
+        )
+    )
+
+    # preserve order of argument limits
+    arg_span = (initial_argument(ic), arg_limit)
+
     if direction == :auto
-        # Determine direction based on initial condition type
-        if initial_condition isa RegularOrigin
-            direction = :forward
-        elseif initial_condition isa AdmissibleCrossing
-            direction = :backward
-        end
+        direction = default_direction(ic)
     end
-    
-    return TOVProblem(params, initial_condition, (r_start, r_end), direction=direction)
+
+    return TOVProblem(params, coord_sys, ic, arg_span, direction = direction)
 end
 
-# TODO:
-# - add TOVProblem constructor, which takes r_span defaults from the initial_condition
-# conditions
-# - for RegularOrigin, the min_r can be infered from the ic, and the direction can default
-# to :forward
-# - for AdmissibleCrossing, the max_r and min_r can be infered from the ic and the direction can
-# default to :backward
+function TOVProblem(
+        params::TOVParameters,
+        ic::AbstractInitialCondition,
+        arg_limit::Real; # could be r_end, or r0, depending on the ic
+        direction::Symbol = :auto
+    )
+    return TOVProblem(params, coord_system(ic), ic, arg_limit; direction)
+end
