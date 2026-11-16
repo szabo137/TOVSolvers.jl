@@ -34,7 +34,7 @@ end
 end
 
 @testitem "callbacks" begin
-    import DifferentialEquations
+    import OrdinaryDiffEq 
 
     coord = MMprimeSystem()
     params = TOVParameters(1.0, 1.0)
@@ -48,7 +48,7 @@ end
         return nothing
     end
 
-    ode_prob = DifferentialEquations.ODEProblem(
+    ode_prob = OrdinaryDiffEq.ODEProblem(
         constant_mass!,
         [1.0, 0.0],
         (1.0, 3.0),
@@ -60,9 +60,9 @@ end
         tolerance,
     )
 
-    ode_sol = DifferentialEquations.solve(
+    ode_sol = OrdinaryDiffEq.solve(
         ode_prob,
-        DifferentialEquations.Tsit5();
+        OrdinaryDiffEq.Tsit5();
         callback,
         abstol=1e-10,
         reltol=1e-10,

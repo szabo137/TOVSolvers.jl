@@ -4,7 +4,7 @@ const DEFAULT_R_ZERO = 1e-16
 const DEFAULT_HORIZON_TOLERANCE = 1e-10
 const DEFAULT_ORIGIN_TOLERANCE = 1e-10
 
-using DifferentialEquations
+using OrdinaryDiffEq 
 using StaticArrays
 
 # constants
