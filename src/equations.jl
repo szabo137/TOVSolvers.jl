@@ -6,7 +6,7 @@ struct TOVEquation{C<:AbstractTOVCoordSystem,F} <: AbstractTOVEquation
     function TOVEquation(coord_system::C) where {C<:AbstractTOVCoordSystem}
         tov = _get_tov_equation(coord_system)
 
-        return new{C,typeof(tov)}(coord_system)
+        return new{C,typeof(tov)}(coord_system,tov)
     end
 end
 
