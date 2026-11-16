@@ -1,5 +1,5 @@
 @testsnippet MockSolutionSetup begin
-      struct TestCoordSystem <: TOVSolvers.AbstractTOVCoordSystem
+    struct TestCoordSystem <: TOVSolvers.AbstractTOVCoordSystem
         id::Int
     end
 
@@ -15,7 +15,7 @@
     Minimal stand-in for the DifferentialEquations solution protocol used by
     TOVSolution: `.t` and `solution[component, :]`.
     """
-    struct FakeODESolution{T,U}
+    struct FakeODESolution{T, U}
         t::Vector{T}
         u::Vector{U}
     end

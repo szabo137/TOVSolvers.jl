@@ -1,17 +1,17 @@
 @testsnippet MockSystem begin
-  struct TestCoordSystem <: AbstractTOVCoordSystem
-    id::Int
-  end
+    struct TestCoordSystem <: AbstractTOVCoordSystem
+        id::Int
+    end
 
-  struct TestInitialCondition <: AbstractInitialCondition
-    coord_sys::TestCoordSystem
-    arg::Float64
-    direction::Symbol
-  end
+    struct TestInitialCondition <: AbstractInitialCondition
+        coord_sys::TestCoordSystem
+        arg::Float64
+        direction::Symbol
+    end
 
-  TOVSolvers.coord_system(ic::TestInitialCondition) = ic.coord_sys
-  TOVSolvers.initial_argument(ic::TestInitialCondition) = ic.arg
-  TOVSolvers.default_direction(ic::TestInitialCondition) = ic.direction
+    TOVSolvers.coord_system(ic::TestInitialCondition) = ic.coord_sys
+    TOVSolvers.initial_argument(ic::TestInitialCondition) = ic.arg
+    TOVSolvers.default_direction(ic::TestInitialCondition) = ic.direction
 end
 
 @testitem "Construction and validation" setup = [MockSystem] begin
@@ -20,7 +20,7 @@ end
     coord = TestCoordSystem(1)
     ic = TestInitialCondition(coord, 0.0, :forward)
 
-    prob = TOVProblem(params, coord, ic, (0.0, 10.0); direction=:auto)
+    prob = TOVProblem(params, coord, ic, (0.0, 10.0); direction = :auto)
 
     @test parameters(prob) === params
     @test coord_system(prob) === coord
@@ -40,7 +40,7 @@ end
         coord,
         ic,
         (0.0, 10.0);
-        direction=:sideways,
+        direction = :sideways,
     )
 end
 
@@ -52,7 +52,6 @@ end
     prob = TOVProblem(TOVParameters(1.0, 0.5), ic, 0.0)
 
 
-    @test argument_span(prob) == (10.0,0.0)
+    @test argument_span(prob) == (10.0, 0.0)
     @test integration_direction(prob) === :backward
 end
-

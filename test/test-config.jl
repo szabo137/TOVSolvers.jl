@@ -1,8 +1,8 @@
 @testitem "TOVSolverConfig defaults" begin
     config = TOVSolverConfig()
 
-    @test config.abstol == 1e-10
-    @test config.reltol == 1e-10
+    @test config.abstol == 1.0e-10
+    @test config.reltol == 1.0e-10
     @test config.horizon_tolerance == DEFAULT_HORIZON_TOLERANCE
     @test config.origin_tolerance == DEFAULT_ORIGIN_TOLERANCE
     @test config.maxiters == 1_000_000
@@ -13,20 +13,20 @@ end
     algorithm = TOVSolvers.Tsit5()
 
     config = TOVSolverConfig(
-        ode_algorithm=algorithm,
-        abstol=Float32(1e-6),
-        reltol=1 // 1_000_000,
-        horizon_tolerance=1e-8,
-        origin_tolerance=1e-12,
-        maxiters=42,
-        save_everystep=false,
+        ode_algorithm = algorithm,
+        abstol = Float32(1.0e-6),
+        reltol = 1 // 1_000_000,
+        horizon_tolerance = 1.0e-8,
+        origin_tolerance = 1.0e-12,
+        maxiters = 42,
+        save_everystep = false,
     )
 
     @test config.ode_algorithm === algorithm
-    @test isapprox(config.abstol, 1e-6)
-    @test isapprox(config.reltol, 1e-6)
-    @test isapprox(config.horizon_tolerance, 1e-8)
-    @test isapprox(config.origin_tolerance, 1e-12)
+    @test isapprox(config.abstol, 1.0e-6)
+    @test isapprox(config.reltol, 1.0e-6)
+    @test isapprox(config.horizon_tolerance, 1.0e-8)
+    @test isapprox(config.origin_tolerance, 1.0e-12)
     @test config.maxiters == 42
     @test config.save_everystep === false
 

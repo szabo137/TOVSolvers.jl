@@ -198,7 +198,7 @@ Return whether the final solution state is at the horizon. This convenience
 method requires `coord_system`, `final_argument`, and `final_state`.
 """
 function reached_horizon(solution::AbstractTOVSolution; kwargs...)
-    reached_horizon(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
+    return reached_horizon(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
 end
 
 """
@@ -208,5 +208,5 @@ Return whether the final solution state is at the origin. This convenience
 method requires `coord_system`, `final_argument`, and `final_state`.
 """
 function reached_origin(solution::AbstractTOVSolution; kwargs...)
-    reached_origin(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
+    return reached_origin(coord_system(solution), final_argument(solution), final_state(solution); kwargs...)
 end

@@ -1,10 +1,10 @@
 @testsnippet MockCallbackSetup begin
-  
+
     mutable struct TestCoordSystem <: TOVSolvers.AbstractTOVCoordSystem
         requested_callbacks::Vector{Symbol}
     end
 
-    struct TestProblem{C,P} <: TOVSolvers.AbstractTOVProblem
+    struct TestProblem{C, P} <: TOVSolvers.AbstractTOVProblem
         params::P
         coord_sys::C
         direction::Symbol
@@ -17,10 +17,10 @@
     # The callback is intentionally inert. This test verifies callback
     # selection, not event behavior.
     function TOVSolvers.create_horizon_callback(
-        coord::TestCoordSystem,
-        params,
-        tolerance,
-    )
+            coord::TestCoordSystem,
+            params,
+            tolerance,
+        )
         push!(coord.requested_callbacks, :horizon)
 
         return TOVSolvers.ContinuousCallback(
@@ -30,10 +30,10 @@
     end
 
     function TOVSolvers.create_origin_callback(
-        coord::TestCoordSystem,
-        params,
-        tolerance,
-    )
+            coord::TestCoordSystem,
+            params,
+            tolerance,
+        )
         push!(coord.requested_callbacks, :origin)
 
         return TOVSolvers.ContinuousCallback(

@@ -1,5 +1,5 @@
 @testsnippet MockCoordSystem begin
-  struct TestCoordSystem <: TOVSolvers.AbstractTOVCoordSystem end
+    struct TestCoordSystem <: TOVSolvers.AbstractTOVCoordSystem end
 
     function TOVSolvers._get_tov_equation(::TestCoordSystem)
         function rhs!(du, u, params, arg)

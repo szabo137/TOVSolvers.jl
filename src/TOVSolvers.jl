@@ -1,10 +1,10 @@
 module TOVSolvers
 
-const DEFAULT_R_ZERO = 1e-16
-const DEFAULT_HORIZON_TOLERANCE = 1e-10
-const DEFAULT_ORIGIN_TOLERANCE = 1e-10
+const DEFAULT_R_ZERO = 1.0e-16
+const DEFAULT_HORIZON_TOLERANCE = 1.0e-10
+const DEFAULT_ORIGIN_TOLERANCE = 1.0e-10
 
-using OrdinaryDiffEq 
+using OrdinaryDiffEq
 using StaticArrays
 
 # constants

@@ -1,11 +1,11 @@
-# TODO: 
+# TODO:
 # - update this using Coordinate systems
 """
     compute_discriminant(r_h, m_h, params::TOVParameters)
 
 Compute the discriminant Δ = B² - 4AC for the admissible crossing condition.
 
-For a crossing at the horizon r = 2m to be admissible (regular), the 
+For a crossing at the horizon r = 2m to be admissible (regular), the
 discriminant must be non-negative.
 
 # Arguments
@@ -19,12 +19,12 @@ discriminant must be non-negative.
 function compute_discriminant(r_h::Real, m_h::Real, params::TOVParameters)
     omega = params.omega
     x = params.x
-    
-    A = -(x+1) * 2 * m_h
-    B = x * (4*m_h - (x+5)*m_h) + 8*omega*(x+2)*m_h^3
-    C = omega * m_h^3 * (x - 32*omega*m_h^2)
-    
-    return B^2 - 4*A*C
+
+    A = -(x + 1) * 2 * m_h
+    B = x * (4 * m_h - (x + 5) * m_h) + 8 * omega * (x + 2) * m_h^3
+    C = omega * m_h^3 * (x - 32 * omega * m_h^2)
+
+    return B^2 - 4 * A * C
 end
 
 """
@@ -35,7 +35,7 @@ Compute the admissible crossing slopes m'± at the horizon.
 The slopes are given by:
 m'± = (-B ± √Δ) / (2A)
 
-where Δ is the discriminant and A, B, C are coefficients from the 
+where Δ is the discriminant and A, B, C are coefficients from the
 quadratic equation for regularity at the horizon.
 
 # Arguments
@@ -55,24 +55,24 @@ m_plus, m_minus = compute_crossing_slopes(1.0, 0.5, params)
 function compute_crossing_slopes(r_h::Real, m_h::Real, params::TOVParameters)
     omega = params.omega
     x = params.x
-    
+
     # Coefficients
-    A = -(x+1) * 2 * m_h
-    B = x * (4*m_h - (x+5)*m_h) + 8*omega*(x+2)*m_h^3
-    C = omega * m_h^3 * (x - 32*omega*m_h^2)
-    
+    A = -(x + 1) * 2 * m_h
+    B = x * (4 * m_h - (x + 5) * m_h) + 8 * omega * (x + 2) * m_h^3
+    C = omega * m_h^3 * (x - 32 * omega * m_h^2)
+
     # Discriminant
-    Δ = B^2 - 4*A*C
-    
+    Δ = B^2 - 4 * A * C
+
     if Δ < 0
         @warn "No real admissible crossing exists at r_h=$r_h (discriminant=$Δ < 0)"
         return (NaN, NaN)
     end
-    
+
     sqrt_Δ = sqrt(Δ)
-    m_plus = (-B + sqrt_Δ) / (2*A)
-    m_minus = (-B - sqrt_Δ) / (2*A)
-    
+    m_plus = (-B + sqrt_Δ) / (2 * A)
+    m_minus = (-B - sqrt_Δ) / (2 * A)
+
     return (m_plus, m_minus)
 end
 
@@ -98,22 +98,22 @@ params = TOVParameters(0.1, 3.0)
 crossings = find_admissible_crossings(params, 0.1:0.1:5.0)
 ```
 """
-function find_admissible_crossings(params::TOVParameters, r_range; n_points::Int=100)
+function find_admissible_crossings(params::TOVParameters, r_range; n_points::Int = 100)
     r_min, r_max = extrema(r_range)
-    r_values = range(r_min, r_max, length=n_points)
-    
+    r_values = range(r_min, r_max, length = n_points)
+
     admissible = AdmissibleCrossing[]
-    
+
     for r_h in r_values
         m_h = r_h / 2.0
         Δ = compute_discriminant(r_h, m_h, params)
-        
+
         if Δ >= 0
             # Store the crossing with :both to indicate both slopes are available
-            push!(admissible, AdmissibleCrossing(r_h, crossing=:both, params=params))
+            push!(admissible, AdmissibleCrossing(r_h, crossing = :both, params = params))
         end
     end
-    
+
     return admissible
 end
 
@@ -134,11 +134,11 @@ Returns one or two state vectors depending on the crossing type.
 """
 function get_initial_state(ic::AdmissibleCrossing, params::TOVParameters)
     m_plus, m_minus = compute_crossing_slopes(ic.r_h, ic.m_h, params)
-    
+
     if isnan(m_plus) || isnan(m_minus)
         error("Cannot compute initial state: no admissible crossing at r_h=$(ic.r_h)")
     end
-    
+
     if ic.crossing == :plus
         return [[ic.m_h, m_plus]]
     elseif ic.crossing == :minus

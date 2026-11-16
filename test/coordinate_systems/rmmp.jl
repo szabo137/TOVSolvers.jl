@@ -34,11 +34,11 @@ end
 end
 
 @testitem "callbacks" begin
-    import OrdinaryDiffEq 
+    import OrdinaryDiffEq
 
     coord = MMprimeSystem()
     params = TOVParameters(1.0, 1.0)
-    tolerance = 1e-4
+    tolerance = 1.0e-4
 
     # Keep m = u[1] = 1 constant while r advances from 1 to 3.
     # The MMprime horizon callback should trigger near r = 2.
@@ -64,13 +64,13 @@ end
         ode_prob,
         OrdinaryDiffEq.Tsit5();
         callback,
-        abstol=1e-10,
-        reltol=1e-10,
+        abstol = 1.0e-10,
+        reltol = 1.0e-10,
     )
 
     # Current condition:
     # r - 2m - tolerance * r = 0
     # hence r = 2 / (1 - tolerance), with m = 1.
-    @test isapprox(ode_sol.t[end],  2.0 / (1.0 - tolerance),atol=1e-8)
+    @test isapprox(ode_sol.t[end], 2.0 / (1.0 - tolerance), atol = 1.0e-8)
     @test ode_sol.t[end] < 3.0
 end

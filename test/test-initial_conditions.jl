@@ -1,6 +1,6 @@
 @testsnippet MockCoordSystems begin
-  
-      struct MockCoordSystem <: AbstractTOVCoordSystem end
+
+    struct MockCoordSystem <: AbstractTOVCoordSystem end
 
     TOVSolvers.coordinate_names(::MockCoordSystem) = (:u1, :u2)
 
@@ -19,12 +19,12 @@
     ) = iszero(arg)
 
     TOVSolvers.assert_regular_origin(
-                                     ::MockCoordSystem,
-                                     arg,
-                                     u1,
-                                     u2;
-                                     kwargs...,
-                                    ) = iszero(arg) || throw(ArgumentError("mock origin must have arg == 0"))
+        ::MockCoordSystem,
+        arg,
+        u1,
+        u2;
+        kwargs...,
+    ) = iszero(arg) || throw(ArgumentError("mock origin must have arg == 0"))
 
 
 end
