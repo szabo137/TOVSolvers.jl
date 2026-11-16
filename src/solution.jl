@@ -14,7 +14,7 @@ struct TOVSolution{S,C<:AbstractTOVCoordSystem, IC<:AbstractInitialCondition} <:
         hit_horizon::Bool,
         reached_origin::Bool,
     ) where {S, C<:AbstractTOVCoordSystem, IC <: AbstractInitialCondition}
-        coord_system(ic) == coord_sys || throw(
+        coord_system(initial_condition) == coord_sys || throw(
             ArgumentError(
                 "coordinate system must match with the one from initial conditions"
             )
@@ -32,14 +32,14 @@ struct TOVSolution{S,C<:AbstractTOVCoordSystem, IC<:AbstractInitialCondition} <:
 end
 
 parameters(sol::TOVSolution) = getfield(sol,:params)
-initial_conditions(sol::TOVSolution) = getfield(sol,:ic)
+initial_condition(sol::TOVSolution) = getfield(sol,:ic)
 coord_system(sol::TOVSolution) = getfield(sol,:coord_sys)
-hit_horizon(sol::TOVSolution) = getfield(sol,:hit_horizon)
+reached_horizon(sol::TOVSolution) = getfield(sol,:hit_horizon)
 reached_origin(sol::TOVSolution) = getfield(sol,:reached_origin)
 
 # Convenience methods
-Base.length(sol::TOVSolution) = length(sol.r)
-Base.getindex(sol::TOVSolution, i::Int) = (sol.r[i], sol.m[i], sol.m_prime[i])
+Base.length(sol::TOVSolution) = length(sol.ode_sol.t)
+Base.getindex(sol::TOVSolution, i::Int) = (sol.ode_sol.t[i], sol.ode_sol.u[i]...)
 Base.iterate(sol::TOVSolution, state=1) = state > length(sol) ? nothing : (sol[state], state+1)
 
 
