@@ -60,7 +60,7 @@ function Base.getproperty(sol::TOVSolution, s::Symbol)
 end
 
 # Solution classifier
-classify_solution(sol::TOVSolution) = _classify_solution(initial_conditions(sol), sol)
+classify_solution(sol::TOVSolution) = _classify_solution(initial_condition(sol), sol)
 
 function _classify_solution(ic::RegularOrigin, sol::TOVSolution)
     return sol.hit_horizon ? :regular_origin_to_horizon : :regular_origin_incomplete
