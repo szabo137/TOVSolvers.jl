@@ -63,7 +63,7 @@ function TOVProblem(
             )
     )
 
-    #arg_span = arg_limit < arg_init ? (arg_limit,arg_init) : (arg_init, arg_limit)
+    # preserve order of argument limits
     arg_span = (initial_argument(ic), arg_limit)
 
     if direction == :auto

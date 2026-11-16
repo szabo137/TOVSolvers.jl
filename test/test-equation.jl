@@ -16,15 +16,15 @@ end
 @testitem "TOVEquation delegates to the coordinate-system RHS" setup = [MockCoordSystem] begin
 
     coord = TestCoordSystem()
-    equation = TOVSolvers.TOVEquation(coord)
-    params = TOVSolvers.TOVParameters(2.0, 5.0)
+    equation = TOVEquation(coord)
+    params = TOVParameters(2.0, 5.0)
 
     u = [3.0, 7.0]
     du = zeros(2)
 
     result = equation(du, u, params, 0.5)
 
-    @test TOVSolvers.coord_system(equation) === coord
+    @test coord_system(equation) === coord
     @test result === nothing
     @test du == [6.5, 2.0]
 end

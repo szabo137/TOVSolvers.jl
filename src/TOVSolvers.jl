@@ -38,7 +38,7 @@ export TOVSolverConfig
 export TOVEquation
 
 # Solving interface
-export solve, find_admissible_crossings, slow_manifold
+export create_callbacks, solve, find_admissible_crossings, slow_manifold
 
 
 # Utilities

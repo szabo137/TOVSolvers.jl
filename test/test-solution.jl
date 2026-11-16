@@ -39,9 +39,9 @@ end
         ],
     )
 
-    params = TOVSolvers.TOVParameters(1.0, 0.5)
+    params = TOVParameters(1.0, 0.5)
 
-    sol = TOVSolvers.TOVSolution(
+    sol = TOVSolution(
         raw_solution,
         params,
         coord,
@@ -50,8 +50,8 @@ end
         false,
     )
 
-    @test TOVSolvers.parameters(sol) === params
-    @test TOVSolvers.coord_system(sol) === coord
+    @test parameters(sol) === params
+    @test coord_system(sol) === coord
 
     @test length(sol) == 3
 

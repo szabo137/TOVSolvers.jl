@@ -63,8 +63,10 @@ end
 classify_solution(sol::TOVSolution) = _classify_solution(initial_conditions(sol),sol)
 
 function _classify_solution(ic::RegularOrigin, sol::TOVSolution)
-        sol.hit_horizon ? :regular_origin_to_horizon : :regular_origin_incomplete
+  sol.hit_horizon ? :regular_origin_to_horizon : :regular_origin_incomplete
 end
+
+# TODO: add classifier for admissible crossings
 
 function Base.show(io::IO, sol::TOVSolution)
     coord_sys = coord_system(sol)
