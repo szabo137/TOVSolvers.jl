@@ -35,9 +35,11 @@ export final_argument, final_state, termination_reason
 export TOVParameters, TOVProblem, TOVSolution
 export RegularOrigin, AdmissibleCrossing
 export TOVSolverConfig
+export TOVEquation
 
 # Solving interface
 export solve, find_admissible_crossings, slow_manifold
+
 
 # Utilities
 export compute_discriminant, compute_crossing_slopes
