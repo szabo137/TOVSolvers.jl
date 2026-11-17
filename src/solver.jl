@@ -67,7 +67,7 @@ end
 
 function solve(prob::TOVProblem, config::TOVSolverConfig = TOVSolverConfig())
     # Get initial states (may be multiple for AdmissibleCrossing with :both)
-    ic = initial_conditions(prob)
+    ic = initial_condition(prob)
     if ic isa RegularOrigin
         u0_list = [initial_state(ic)]
     else  # AdmissibleCrossing
@@ -100,9 +100,9 @@ function solve_single(prob::TOVProblem, u0, config::TOVSolverConfig)
     callbacks = create_callbacks(prob, config)
 
     # Define ODE problem
-    ode_prob = ODEProblem(tov_eq!, u0, [arg_span(prob)...], parameters(prob))
+    ode_prob = ODEProblem(tov_eq!, u0, [argument_span(prob)...], parameters(prob))
 
-    ode_sol = DifferentialEquations.solve(
+    ode_sol = OrdinaryDiffEq.solve(
         ode_prob,
         config.ode_algorithm;
         abstol = config.abstol,
@@ -127,7 +127,7 @@ function solve_single(prob::TOVProblem, u0, config::TOVSolverConfig)
         end
 
         # Check if at origin
-        if initial_conditions(prob) isa RegularOrigin || reached_horizon(coord_sys, arg_final, u1_final, u2_final; tol = config.origin_tolerance)
+        if initial_condition(prob) isa RegularOrigin || reached_horizon(coord_sys, arg_final, u1_final, u2_final; tol = config.origin_tolerance)
             reached_origin = true
         end
     end
@@ -135,7 +135,7 @@ function solve_single(prob::TOVProblem, u0, config::TOVSolverConfig)
         ode_sol,
         parameters(prob),
         coord_system(prob),
-        initial_conditions(prob),
+        initial_condition(prob),
         hit_horizon,
         reached_origin,
     )
